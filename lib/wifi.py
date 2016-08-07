@@ -63,6 +63,8 @@ def connect(wait = True, timeout = 10):
     if not wait:
         timeout = None
     if "username" in details and details["username"]:
+        if not hasattr(_nic, 'WPA_ENT'):
+            raise OSError("You are trying to use WPA-EAP, but haven't updated your Micropython.")
         if "certfile" in details:
             loadcert('/flash/%s' % details["certfile"])
 
