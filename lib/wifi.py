@@ -45,7 +45,12 @@ def connect(wait = True, timeout = 10):
 
     if not wait:
         timeout = None
-    if "pw" in details and details["pw"]:
+    if "username" in details and details["username"]:
+        _nic.connect(details["ssid"], details["pw"], timeout=timeout,
+                security=_nic.WPA_ENT, eapmethod=_nic.EAP_METHOD_TTLS_MSCHAPv2,
+                username=details["username"],
+                anonname=details.get("anonname", "badge"))
+    elif "pw" in details and details["pw"]:
         nic().connect(details["ssid"], details["pw"], timeout=timeout)
     else:
         nic().connect(details["ssid"], timeout=timeout)
