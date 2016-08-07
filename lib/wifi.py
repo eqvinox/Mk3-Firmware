@@ -38,6 +38,23 @@ def connection_details():
 def ssid():
     return connection_details()["ssid"]
 
+def loadcert(filepath):
+    nic()
+    try:
+        _nic.file_del('/cert/ca.pem')
+    except:
+        pass
+
+    size = os.stat(filepath)[6]
+    fi = open(filepath, 'rb')
+    fh = _nic.file_open('/cert/ca.pem', _nic.FILE_MODE_CREATE, size)
+    offs = 0
+    while offs < size:
+        data = fi.read(1024)
+        _nic.file_write(fh, offs, data)
+        offs += len(data)
+    _nic.file_close(fh)
+
 def connect(wait = True, timeout = 10):
     if nic().is_connected():
         return
@@ -46,6 +63,9 @@ def connect(wait = True, timeout = 10):
     if not wait:
         timeout = None
     if "username" in details and details["username"]:
+        if "certfile" in details:
+            loadcert('/flash/%s' % details["certfile"])
+
         _nic.connect(details["ssid"], details["pw"], timeout=timeout,
                 security=_nic.WPA_ENT, eapmethod=_nic.EAP_METHOD_TTLS_MSCHAPv2,
                 username=details["username"],
