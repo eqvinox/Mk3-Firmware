@@ -43,19 +43,15 @@ def connect(wait = True, timeout = 10):
         return
     details = connection_details()
 
+    if not wait:
+        timeout = None
     if "pw" in details and details["pw"]:
-        if wait:
-            nic().connect(details["ssid"], details["pw"], timeout=timeout)
-            wait_for_connection()
-        else:
-            nic().connect(details["ssid"], details["pw"], timeout=None)
+        nic().connect(details["ssid"], details["pw"], timeout=timeout)
     else:
-        if wait:
-            nic().connect(details["ssid"], timeout=timeout)
-            wait_for_connection()
-        else:
-            nic().connect(details["ssid"], timeout=None)
+        nic().connect(details["ssid"], timeout=timeout)
 
+    if wait:
+        wait_for_connection()
 
 def wait_for_connection():
     while not nic().is_connected():
